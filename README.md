@@ -1,3 +1,5 @@
 cs143
 =====
-This is Harvard cs143 midterm quest created by Youngjune Gwon.
+A small OpenFlow project for Harvard CS143 Fall'12 Midterm Part I.
+
+Created by Youngjune Lee Gwon.
