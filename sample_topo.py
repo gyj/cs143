@@ -1,45 +1,47 @@
-"""Custom topology example
-
-author: Brandon Heller (brandonh@stanford.edu)
-
-Two directly connected switches plus a host for each switch:
-
-   host --- switch --- switch --- host
-
-Adding the 'topos' dict with a key/value pair to generate our newly defined
-topology enables one to pass in '--topo=mytopo' from the command line.
-"""
-
 from mininet.topo import Topo, Node
 
-class MyTopo( Topo ):
-    "Simple topology example."
+""" 
+  custom topology example
 
-    def __init__( self, enable_all = True ):
-        "Create custom topo."
+  h1 -- s2 -- s3 -- s4 -- h5  
+        |           |
+        |           |
+        h6          h7
 
-        # Add default members to class.
-        super( MyTopo, self ).__init__()
+"""
 
-        # Set Node IDs for hosts and switches
-        leftHost = 1
-        leftSwitch = 2
-        rightSwitch = 3
-        rightHost = 4
+class MyTopo(Topo):
+  def __init__(self, enable_all = True):
+    # add default members to class
+    super(MyTopo, self).__init__()
 
-        # Add nodes
-        self.add_node( leftSwitch, Node( is_switch=True ) )
-        self.add_node( rightSwitch, Node( is_switch=True ) )
-        self.add_node( leftHost, Node( is_switch=False ) )
-        self.add_node( rightHost, Node( is_switch=False ) )
+    # set host and switch IDs
+    h1 = 1
+    s2 = 2
+    s3 = 3
+    s4 = 4
+    h5 = 5
+    h6 = 6
+    h7 = 7
 
-        # Add edges
-        self.add_edge( leftHost, leftSwitch )
-        self.add_edge( leftSwitch, rightSwitch )
-        self.add_edge( rightSwitch, rightHost )
+    # add nodes
+    self.add_node(h1, Node(is_switch = False))
+    self.add_node(s2, Node(is_switch = True))
+    self.add_node(s3, Node(is_switch = True))
+    self.add_node(s4, Node(is_switch = True))
+    self.add_node(h5, Node(is_switch = False))
+    self.add_node(h6, Node(is_switch = False))
+    self.add_node(h7, Node(is_switch = False))
 
-        # Consider all switches and hosts 'on'
-        self.enable_all()
+    # add edges
+    self.add_edge(h1,s2)
+    self.add_edge(s2,h6)
+    self.add_edge(s2,s3)
+    self.add_edge(s3,s4)
+    self.add_edge(s4,h7)
+    self.add_edge(s4,h5)
 
+    # turn all switches and hosts 'on'
+    self.enable_all()
 
-topos = { 'topo1': ( lambda: MyTopo() ) }
+topos = {'sample_topo' : (lambda: MyTopo())}

@@ -9,73 +9,48 @@ import os
 import time
 
 """
-
   To run this script: sudo python q7.py
 
+    follow instructions embedded in-line
+ 
 """
 
 class MyTopo( Topo ):
-    def __init__( self, enable_all = True ):
-        # Add default members to class.
-        super( MyTopo, self ).__init__()
+  def __init__( self, enable_all = True ):
+    # [TODO] paste your code from topo1.py
 
-        # Add nodes
-
-        # example: self.add_node( <client's node ID>, Node(is_switch = ...), name=" ... ")
-
-        YOUR CODE here
-
-
-
-        # Add edges
-
-        # example: to add a link with 20ms delay between host1 and host2
-        #
-        # self.add_edge( host1NodeId, host2NodeId, delay=20)
-        #
-
-        YOUR CODE here
-
-
-
-        # Consider all switches and hosts 'on'
-        self.enable_all()
-        pass
+    # enable all switches and hosts
+    self.enable_all()
     pass
+  pass
 
 
 def main():
-    # instantiate the topology and mininet network and start the
-    # network
+    # instantiate topology and mininet network and start 
+    # the network
+    # [TODO] your code here
 
-    YOUR CODE here
 
-
-    # obtain references to the host objects by using the network's
+    # obtain references to host objects by using network's
     # "idToNode" table with the host ID in the topoloy
+    # see net.py for details
+    # [TODO] your code here
 
-    YOUR CODE here
 
-
-
-    # call the "cmd()" API on host objects, e.g.,
-    #
-    # host1.cmd("ls -l")
-    #
-    # this API returns the executed's command output as a string
-
+    # call "cmd()" API on host objects, e.g., h7.cmd("ls -l")
+    # the API returns the executed command output as string
     
-    # start polipo on the proxy and lighttpd on the server
+    # start lighttpd on web server and polipo on proxy
+    # [TODO] your code here
 
-    YOUR CODE HERE
 
-
-    # the client fetches the bigfile
-
-    YOUR CODE HERE
+    # client gets file10M through: 1) web server and 2) proxy
+    # run multiple times, do time measurements, handle empirical data
+    # [TODO] your code here
 
 
     # stop the network
+    # [TODO] your code here
 
 
     return
