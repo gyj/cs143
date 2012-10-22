@@ -1,43 +1,48 @@
-"""
-
-This is a template for a simple OpenFlow controller. It acts as a hub or
-could be a simple learning switch.
-
-This straw man design is based on tutorial code available from 
-https://github.com/noxrepo/pox 
-
-"""
-
 from pox.core import core
 import pox.openflow.libopenflow_01 as of
 
+"""
+
+This is a simple OpenFlow controller. It acts as a hub or can be 
+made a simple learning switch.
+
+For our purpose, only one controller should suffice. Hence, you 
+may need to use 'self.connection.dpid' to select a switch.
+
+Straw man design of this code is based on tutorial code available 
+from https://github.com/noxrepo/pox 
+
+"""
+
 log = core.getLogger()
 
-class Tutorial (object):
+class yourController (object):
   """
-  A Tutorial object is created for each switch that connects.
-  A Connection object for that switch is passed to the __init__ function.
+  yourController object is created for each switch that connects.
+  connection object for the switch is passed to __init__ function.
   """
   def __init__ (self, connection):
-    # Keep track of the connection to the switch so that we can
-    # send it messages!
+    # keep track of the connection to the switch so that we can
+    # send messages to the switch
     self.connection = connection
 
-    # This binds our PacketIn event listener
+    # bind PacketIn event listener
     connection.addListeners(self)
 
-    # Use this table to keep track of which ethernet address is on
-    # which switch port (keys are MACs, values are ports).
+    # map from a mac addr instance to the corresponding output
+    # port number to use to reach that mac addr
+    # use this table to keep track of which ethernet address is on
+    # which switch port (keys are MACs, values are ports)
     self.mac_to_port = {}
 
 
   def send_packet (self, buffer_id, raw_data, out_port, in_port):
     """
-    Sends a packet out of the specified switch port.
-    If buffer_id is a valid buffer on the switch, use that.  Otherwise,
-    send the raw data in raw_data.
-    The "in_port" is the port number that packet arrived on.  Use
-    OFPP_NONE if you're generating this packet.
+    sends a packet out of the specified switch port.
+    if buffer_id is a valid buffer on the switch, use it.
+    otherwise, send the raw data in raw_data.
+    'in_port' is the port number that packet arrived on.  
+    use OFPP_NONE if you're generating this packet.
     """
     msg = of.ofp_packet_out()
     msg.in_port = in_port
@@ -65,50 +70,49 @@ class Tutorial (object):
     the input port.
     """
 
-    # We want to output to all ports -- we do that using the special
-    # OFPP_FLOOD port as the output port.  (We could have also used
-    # OFPP_ALL.)
+    # want to output to all ports -- do it using the special OFPP_FLOOD port 
+    # as the output port. could have also used OFPP_ALL.
     self.send_packet(packet_in.buffer_id, packet_in.data,
                      of.OFPP_FLOOD, packet_in.in_port)
 
-    # Note that if we didn't get a valid buffer_id, a slightly better
-    # implementation would check that we got the full data before
-    # sending it (len(packet_in.data) should be == packet_in.total_len)).
+    # if we didn't get a valid buffer_id, a slightly better implementation 
+    # would check that we got the full data before sending it 
+    # i.e., len(packet_in.data) should equal packet_in.total_len.
 
 
   def act_like_switch (self, packet, packet_in):
     """
-    Implement switch-like behavior.
+    Implement switch-like behavior
     """
 
-    """ # DELETE THIS LINE TO START WORKING ON THIS (AND THE ONE BELOW!) #
+    """ [delete this line if you work on below]
 
-    # Here's some psuedocode to start you off implementing a learning
-    # switch.  You'll need to rewrite it as real Python code.
+    # here's some psuedocode to start you off implementing a learning
+    # switch. you'll need to rewrite it as real Python code.
 
-    # Learn the port for the source MAC
+    # learn the port for the source MAC
     self.mac_to_port ... <add or update entry>
 
     if the port associated with the destination MAC of the packet is known:
-      # Send packet out the associated port
+      # send packet out the associated port
       self.send_packet(packet_in.buffer_id, packet_in.data,
                        ..., packet_in.in_port)
 
-      # Once you have the above working, try pushing a flow entry
+      # once you have the above working, try pushing a flow entry
       # instead of resending the packet (comment out the above and
       # uncomment and complete the below.)
 
       log.debug("Installing flow...")
-      # Maybe the log statement should have source/destination/port?
+      # maybe the log statement should have source/destination/port?
 
       #msg = of.ofp_flow_mod()
       #
-      ## Set fields to match received packet
+      # set fields to match received packet
       #msg.match = of.ofp_match.from_packet(packet)
       #
-      #< Set other fields of flow_mod (timeouts? buffer_id?) >
+      #< set other fields of flow_mod (timeouts? buffer_id?) >
       #
-      #< Add an output action, and send -- similar to send_packet() >
+      #< add an output action, and send -- similar to send_packet() >
 
     else:
       # Flood the packet out everything but the input port
@@ -116,7 +120,7 @@ class Tutorial (object):
       self.send_packet(packet_in.buffer_id, packet_in.data,
                        of.OFPP_FLOOD, packet_in.in_port)
 
-    """ # DELETE THIS LINE TO START WORKING ON THIS #
+    [delete this line after completing code above] """
 
 
   def _handle_PacketIn (self, event):
@@ -124,18 +128,16 @@ class Tutorial (object):
     Handles packet in messages from the switch.
     """
 
-    packet = event.parsed # This is the parsed packet data.
+    packet = event.parsed # this is parsed packet data
     if not packet.parsed:
       log.warning("Ignoring incomplete packet")
       return
 
-    packet_in = event.ofp # The actual ofp_packet_in message.
+    packet_in = event.ofp # actual ofp_packet_in message
 
-    # Comment out the following line and uncomment the one after
-    # when starting the exercise.
+    # act_like_switch is commented out
     self.act_like_hub(packet, packet_in)
     #self.act_like_switch(packet, packet_in)
-
 
 
 def launch ():
@@ -144,6 +146,6 @@ def launch ():
   """
   def start_switch (event):
     log.debug("Controlling %s" % (event.connection,))
-    Tutorial(event.connection)
+    yourController(event.connection)
   core.openflow.addListenerByName("ConnectionUp", start_switch)
 
